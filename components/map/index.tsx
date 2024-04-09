@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { Alert, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import {
   LocationObject,
@@ -7,14 +7,23 @@ import {
   useForegroundPermissions,
 } from 'expo-location'
 import MapView, { Marker } from 'react-native-maps'
-import { UrbtyOfctlLttotPblancDetail } from '@/model/home'
+import {
+  UrbtyOfctlLttotPblancDetail,
+  UrbtyOfctlLttotPblancDetailData,
+} from '@/model/home'
+import { getLocation } from '@/lib/utils'
+
+type MMMM = UrbtyOfctlLttotPblancDetailData & {
+  lat?: number
+  lng?: number
+}
 
 export default function MapComponent({
   isLoading,
-  data,
+  mapData,
 }: {
   isLoading: boolean
-  data: UrbtyOfctlLttotPblancDetail | undefined
+  mapData: UrbtyOfctlLttotPblancDetail
 }) {
   const [LocationPermissionInfo, requestPermission] = useForegroundPermissions()
   const [currentLocation, setCurrentLocation] = useState<LocationObject | null>(null)
@@ -52,12 +61,27 @@ export default function MapComponent({
   const ASPECT_RATIO = width / height
   const LATITUDE = 37.545783082491376
   const LONGITUDE = 126.99161878667414
-  const LATITUDE_DELTA = 0.09
+  const LATITUDE_DELTA = 0.07
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO
 
-  if (!currentLocation) {
-    return <></>
+  // if (!currentLocation) {
+  //   return <></>
+  // }
+
+  const [makerData, setMakerData] = useState<MMMM[]>([])
+
+  const getlocationData = async () => {
+    let arr: MMMM[] = []
+    for (const item of mapData.data) {
+      const { lat, lng } = await getLocation(item.HSSPLY_ADRES)
+      arr = [...arr, { ...item, lat, lng }]
+    }
+    setMakerData(arr)
   }
+
+  useEffect(() => {
+    getlocationData()
+  }, [mapData])
 
   return (
     <View style={styles.container}>
@@ -74,17 +98,19 @@ export default function MapComponent({
         loadingEnabled={isLoading}
         loadingIndicatorColor='#666666'
         loadingBackgroundColor='#eeeeee'
-        showsUserLocation
-        showsMyLocationButton
+        // showsUserLocation
+        // showsMyLocationButton
       >
-        <Marker
-          coordinate={{
-            latitude: 37.56022361572345,
-            longitude: 126.99511143842903,
-          }}
-          title={'maker'}
-          description={'maker desc'}
-        />
+        {makerData.map((item, index) => (
+          <Marker
+            key={item.HOUSE_MANAGE_NO}
+            coordinate={{
+              latitude: item.lat!,
+              longitude: item.lng!,
+            }}
+            title={item.HOUSE_DTL_SECD_NM}
+          />
+        ))}
       </MapView>
       {/* <View style={styles.buttonContainer}>
                 <TouchableOpacity

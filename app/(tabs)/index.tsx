@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet, ActivityIndicator } from 'react-native'
 
 import EditScreenInfo from '@/components/EditScreenInfo'
 import { Text, View } from '@/components/Themed'
@@ -19,11 +19,21 @@ export default function TabOneScreen() {
   //   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)
   //   useRefreshOnFocus(refetch)
 
+  if (isPending) {
+    return <ActivityIndicator size='large' />
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Error</Text>
+      </View>
+    )
+  }
+
   return (
     <View style={styles.container}>
-      <MapComponent data={data} isLoading={isLoading} />
-      {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
-      {/* <EditScreenInfo path="app/(tabs)/index.tsx" /> */}
+      <MapComponent mapData={data} isLoading={isLoading} />
     </View>
   )
 }
