@@ -1,90 +1,76 @@
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { Alert, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useMemo, useState } from 'react'
+import { Dimensions, StyleSheet } from 'react-native'
+
+import MapView from 'react-native-maps'
 import {
-  LocationObject,
-  PermissionStatus,
-  getCurrentPositionAsync,
-  useForegroundPermissions,
-} from 'expo-location'
-import MapView, { Marker } from 'react-native-maps'
-import {
-  UrbtyOfctlLttotPblancDetail,
+  APTLttotPblancDetail,
+  APTLttotPblancDetailData,
   UrbtyOfctlLttotPblancDetailData,
 } from '@/model/home'
-import { getLocation } from '@/lib/utils'
+import useLocationPermission from '@/hooks/useLocationPermission'
+import MapContainer from './MapContainer'
+import MarkerComponent from './MarkerComponent'
+import { convertRegionData } from '@/lib/utils'
 
-type MMMM = UrbtyOfctlLttotPblancDetailData & {
+export type UrbtyOfctlLttotPblancDetailLocation = UrbtyOfctlLttotPblancDetailData & {
   lat?: number
   lng?: number
 }
+
+type OptionalRegionLocation = {
+  count?: number
+  children?: APTLttotPblancDetailData[]
+}
+export type InitRegionLocationModel = {
+  lat: number
+  lng: number
+  city: string
+} & OptionalRegionLocation
 
 export default function MapComponent({
   isLoading,
   mapData,
 }: {
   isLoading: boolean
-  mapData: UrbtyOfctlLttotPblancDetail
+  mapData: APTLttotPblancDetail
 }) {
-  const [LocationPermissionInfo, requestPermission] = useForegroundPermissions()
-  const [currentLocation, setCurrentLocation] = useState<LocationObject | null>(null)
-
-  const verifyPermission = async () => {
-    if (LocationPermissionInfo?.status === PermissionStatus.UNDETERMINED) {
-      const permissionResponse = await requestPermission()
-      return permissionResponse.granted
-    }
-    if (LocationPermissionInfo?.status === PermissionStatus.DENIED) {
-      Alert.alert(
-        'Insufficent Permission',
-        'You need to grant location permissions to use this app.'
-      )
-      return false
-    }
-    return true
-  }
-
-  const getLocationInfo = async () => {
-    const hasPermission = await verifyPermission()
-    if (!hasPermission) {
-      return
-    }
-    const info = await getCurrentPositionAsync()
-    setCurrentLocation(info)
-  }
-
-  useLayoutEffect(() => {
-    getLocationInfo()
-  }, [])
-
+  const location = useLocationPermission()
+  // useEffect(() => console.log(location), [location])
   const { width, height } = Dimensions.get('window')
 
   const ASPECT_RATIO = width / height
-  const LATITUDE = 37.545783082491376
-  const LONGITUDE = 126.99161878667414
-  const LATITUDE_DELTA = 0.07
+  const LATITUDE = 36
+  const LONGITUDE = 127.8
+  const LATITUDE_DELTA = 5.9
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO
 
-  // if (!currentLocation) {
-  //   return <></>
-  // }
-
-  const [makerData, setMakerData] = useState<MMMM[]>([])
-
-  const getlocationData = async () => {
-    let arr: MMMM[] = []
-    for (const item of mapData.data) {
-      const { lat, lng } = await getLocation(item.HSSPLY_ADRES)
-      arr = [...arr, { ...item, lat, lng }]
-    }
-    setMakerData(arr)
-  }
-
-  useEffect(() => {
-    getlocationData()
+  const filteredRegionData = useMemo(() => {
+    const regionData = convertRegionData(mapData.data)
+    return initRegionLocation.map((item) => {
+      return {
+        ...item,
+        count: regionData[item.city].length,
+        // children: regionData[item.city],
+      }
+    })
   }, [mapData])
 
+  // const getLocationData = async () => {
+  // let arr: UrbtyOfctlLttotPblancDetailLocation[] = []
+  // for (const item of mapData.data) {
+  //   const { lat, lng } = await getLocation(item.HSSPLY_ADRES)
+  //   arr = [...arr, { ...item, lat, lng }]
+  // }
+  // setMakerData(arr)
+  // setMakerData(getAPTLttotPblancDetail as UrbtyOfctlLttotPblancDetailLocation[])
+  // }
+
+  // useEffect(() => {
+  //   getLocationData()
+  // }, [mapData])
+
   return (
-    <View style={styles.container}>
+    <MapContainer>
       <MapView
         //   provider={this.props.provider}
         style={styles.map}
@@ -101,26 +87,9 @@ export default function MapComponent({
         // showsUserLocation
         // showsMyLocationButton
       >
-        {makerData.map((item, index) => (
-          <Marker
-            key={item.HOUSE_MANAGE_NO}
-            coordinate={{
-              latitude: item.lat!,
-              longitude: item.lng!,
-            }}
-            title={item.HOUSE_DTL_SECD_NM}
-          />
-        ))}
+        <MarkerComponent locationData={filteredRegionData} />
       </MapView>
-      {/* <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                    // onPress={() => this.setState({markers: []})}
-                    style={styles.bubble}
-                >
-                    <Text>Tap map to create a marker of random color</Text>
-                </TouchableOpacity>
-            </View> */}
-    </View>
+    </MapContainer>
   )
 }
 
@@ -145,6 +114,89 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
 })
+
+const initRegionLocation: InitRegionLocationModel[] = [
+  {
+    lat: 37.540705,
+    lng: 126.956764,
+    city: '서울',
+  },
+  {
+    lat: 37.469221,
+    lng: 126.573234,
+    city: '인천',
+  },
+  {
+    lat: 35.126033,
+    lng: 126.831302,
+    city: '광주',
+  },
+  {
+    lat: 35.798838,
+    lng: 128.583052,
+    city: '대구',
+  },
+  {
+    lat: 35.519301,
+    lng: 129.239078,
+    city: '울산',
+  },
+  {
+    lat: 36.321655,
+    lng: 127.378953,
+    city: '대전',
+  },
+  {
+    lat: 35.198362,
+    lng: 129.053922,
+    city: '부산',
+  },
+  {
+    lat: 37.567167,
+    lng: 127.190292,
+    city: '경기',
+  },
+  {
+    lat: 37.555837,
+    lng: 128.209315,
+    city: '강원',
+  },
+  {
+    lat: 36.557229,
+    lng: 126.779757,
+    city: '충남',
+  },
+  {
+    lat: 36.628503,
+    lng: 127.929344,
+    city: '충북',
+  },
+  {
+    lat: 36.248647,
+    lng: 128.664734,
+    city: '경북',
+  },
+  {
+    lat: 35.259787,
+    lng: 128.664734,
+    city: '경남',
+  },
+  {
+    lat: 35.716705,
+    lng: 127.144185,
+    city: '전북',
+  },
+  {
+    lat: 34.8194,
+    lng: 126.893113,
+    city: '전남',
+  },
+  {
+    lat: 33.364805,
+    lng: 126.542671,
+    city: '제주',
+  },
+]
 
 const customStyle = [
   {

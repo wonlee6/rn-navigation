@@ -31,11 +31,7 @@ export default function TabOneScreen() {
     )
   }
 
-  return (
-    <View style={styles.container}>
-      <MapComponent mapData={data} isLoading={isLoading} />
-    </View>
-  )
+  return <MapComponent mapData={data} isLoading={isLoading} />
 }
 
 const styles = StyleSheet.create({
@@ -47,10 +43,5 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
   },
 })
