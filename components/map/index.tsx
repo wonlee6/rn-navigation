@@ -12,11 +12,6 @@ import MapContainer from './MapContainer'
 import MarkerComponent from './MarkerComponent'
 import { convertRegionData } from '@/lib/utils'
 
-export type UrbtyOfctlLttotPblancDetailLocation = UrbtyOfctlLttotPblancDetailData & {
-  lat?: number
-  lng?: number
-}
-
 type OptionalRegionLocation = {
   count?: number
   children?: APTLttotPblancDetailData[]
@@ -27,6 +22,12 @@ export type InitRegionLocationModel = {
   city: string
 } & OptionalRegionLocation
 
+type RegionModel = {
+  latitude: number
+  longitude: number
+  latitudeDelta: number
+  longitudeDelta:number
+}
 export default function MapComponent({
   isLoading,
   mapData,
@@ -37,12 +38,14 @@ export default function MapComponent({
   const location = useLocationPermission()
   // useEffect(() => console.log(location), [location])
   const { width, height } = Dimensions.get('window')
-
   const ASPECT_RATIO = width / height
-  const LATITUDE = 36
-  const LONGITUDE = 127.8
-  const LATITUDE_DELTA = 5.9
-  const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO
+
+  const [region, setRegion] = useState<RegionModel>({
+    latitude: 36,
+    longitude: 127.8,
+    latitudeDelta: 5.9,
+    longitudeDelta: 5.9 * ASPECT_RATIO,
+  })
 
   const filteredRegionData = useMemo(() => {
     const regionData = convertRegionData(mapData.data)
@@ -74,12 +77,8 @@ export default function MapComponent({
       <MapView
         //   provider={this.props.provider}
         style={styles.map}
-        initialRegion={{
-          latitude: LATITUDE,
-          longitude: LONGITUDE,
-          latitudeDelta: LATITUDE_DELTA,
-          longitudeDelta: LONGITUDE_DELTA,
-        }}
+        initialRegion={region}
+        onRegionChange={(region, detail) => setRegion(region)}
         // customMapStyle={customStyle}
         loadingEnabled={isLoading}
         loadingIndicatorColor='#666666'

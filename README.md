@@ -1,3 +1,3 @@
 # rn-navigation
 
-tests
+### https://github.com/react-native-maps/react-native-maps#zoom-to-specified-markers

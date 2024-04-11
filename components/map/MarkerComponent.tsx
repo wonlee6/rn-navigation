@@ -1,5 +1,5 @@
 import React from 'react'
-import { Marker } from 'react-native-maps'
+import { Marker, MarkerSelectEvent } from 'react-native-maps'
 import { StyleSheet } from 'react-native'
 import { InitRegionLocationModel } from '.'
 import { APTLttotPblancDetailData } from '@/model/home'
@@ -16,6 +16,9 @@ type Props = {
 }
 
 function MarkerComponent({ locationData }: Props) {
+  const handleSelect = (event: MarkerSelectEvent) => {
+    console.log(event)
+  }
   return (
     <>
       {locationData.map((item) => (
@@ -26,6 +29,7 @@ function MarkerComponent({ locationData }: Props) {
             longitude: item.lng,
           }}
           title={item.city}
+          onSelect={handleSelect}
         >
           <View style={styles.container}>
             <Text style={styles.title}>{item.city}</Text>
