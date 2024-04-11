@@ -78,7 +78,7 @@ export default function MapComponent({
         //   provider={this.props.provider}
         style={styles.map}
         initialRegion={region}
-        onRegionChange={(region, detail) => setRegion(region)}
+        onRegionChange={(region) => setRegion(region)}
         // customMapStyle={customStyle}
         loadingEnabled={isLoading}
         loadingIndicatorColor='#666666'
