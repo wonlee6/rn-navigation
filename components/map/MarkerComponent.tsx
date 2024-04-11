@@ -47,6 +47,8 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     opacity: 0.9,
     padding: 2,
+    borderRadius: 6,
+    borderWidth: 1
   },
   title: {
     textAlign: 'center',
