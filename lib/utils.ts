@@ -114,3 +114,140 @@ export function convertRegionData(data: APTLttotPblancDetailData[]): ReturnRegio
     }
   )
 }
+
+export function getCoordinateByProvince(province: string): {
+  latitude: number
+  longitude: number
+} {
+  switch (province) {
+    case '서울':
+      return {
+        latitude: 37.52946700184102,
+        longitude: 126.98338177953174,
+      }
+    case '강원':
+      return {
+        latitude: 37.58930507165609,
+        longitude: 128.4720543368826,
+      }
+    case '대전':
+      return {
+        latitude: 36.339750047496786,
+        longitude: 127.3943827411547,
+      }
+    case '충남':
+      return {
+        latitude: 36.63924021274023,
+        longitude: 126.82446696967028,
+      }
+    case '세종':
+      return {
+        latitude: 36.515106645179976,
+        longitude: 127.26286767069315,
+      }
+    case '충북':
+      return {
+        latitude: 36.77560946171977,
+        longitude: 127.81026663881764,
+      }
+    case '인천':
+      return {
+        latitude: 37.48694394271754,
+        longitude: 126.70737538180447,
+      }
+    case '경기':
+      return {
+        latitude: 37.535552270362494,
+        longitude: 127.07219922714172,
+      }
+    case '광주':
+      return {
+        latitude: 35.15059988167678,
+        longitude: 126.8316463479257,
+      }
+    case '전남':
+      return {
+        latitude: 34.873344729478546,
+        longitude: 126.87696495144132,
+      }
+    case '전북':
+      return {
+        latitude: 35.81362171998036,
+        longitude: 127.12965049831632,
+      }
+    case '부산':
+      return {
+        latitude: 35.12650750940228,
+        longitude: 129.05706177989632,
+      }
+    case '경남':
+      return {
+        latitude: 35.43927447487706,
+        longitude: 128.4367420056836,
+      }
+    case '울산':
+      return {
+        latitude: 35.55108290196517,
+        longitude: 129.2991687634961,
+      }
+    case '제주':
+      return {
+        latitude: 33.40915344710227,
+        longitude: 126.56388289599572,
+      }
+    case '대구':
+      return {
+        latitude: 35.8567409351135,
+        longitude: 128.58890020970682,
+      }
+    case '경북':
+      return {
+        latitude: 36.531623307426514,
+        longitude: 128.76441121439493,
+      }
+    default:
+      return {
+        latitude: 37.52946700184102,
+        longitude: 126.98338177953174,
+      }
+  }
+}
+
+export function getRatioByProvince(province: string) {
+  switch (province) {
+    case '서울':
+      return 0.09
+    case '강원':
+      return 0.4
+    case '대전':
+      return 0.035
+    case '충남':
+      return 0.3
+    case '세종':
+      return 0.025
+    case '충북':
+      return 0.24
+    case '경기':
+      return 0.2
+    case '광주':
+      return 0.06
+    case '전남':
+      return 0.5
+    case '전북':
+      return 0.3
+    case '부산':
+      return 0.09
+    case '경남':
+      return 0.4
+    case '울산':
+      return 0.2
+    case '제주':
+      return 0.3
+    case '대구':
+      return 0.07
+    case '경북':
+      return 0.4
+    default:
+      return 1
+  }
+}

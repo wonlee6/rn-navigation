@@ -185,3 +185,14 @@ export type PblPvtRentLttotPblancMdlData = {
   SUPLY_HSHLDCO: number // 공급세대수
   TP: string // 타입
 }
+
+type OptionalRegionLocation = {
+  count?: number
+  children?: APTLttotPblancDetailData[]
+}
+
+export type InitRegionLocationModel = {
+  lat: number
+  lng: number
+  city: string
+} & OptionalRegionLocation

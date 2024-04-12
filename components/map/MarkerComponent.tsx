@@ -1,8 +1,7 @@
-import React, { useCallback } from 'react'
-import { LatLng, Marker, MarkerPressEvent, MarkerSelectEvent } from 'react-native-maps'
+import React from 'react'
+import { Marker } from 'react-native-maps'
 import { StyleSheet } from 'react-native'
-import { InitRegionLocationModel } from '.'
-import { APTLttotPblancDetailData } from '@/model/home'
+import { APTLttotPblancDetailData, InitRegionLocationModel } from '@/model/home'
 import { Text, View } from '../Themed'
 import useRegion from '@/store/useRegion'
 
@@ -42,8 +41,10 @@ const MarkerListItem = React.memo((props: MarkerListItemModel) => {
       onPress={(event) => handleRegion(event.nativeEvent.coordinate, city)}
     >
       <View style={styles.container}>
-        <Text style={styles.title}>{city}</Text>
-        <Text style={styles.title}>{count}</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.cityTitle}>{city}</Text>
+        </View>
+        <Text style={styles.count}>{count}</Text>
       </View>
     </Marker>
   )
@@ -51,21 +52,29 @@ const MarkerListItem = React.memo((props: MarkerListItemModel) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 70,
+    width: 60,
     flex: 1,
     shadowColor: 'black',
     shadowOpacity: 0.25,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
     opacity: 0.9,
-    padding: 2,
     borderRadius: 6,
-    borderWidth: 1,
   },
-  title: {
+  titleContainer: {
+    borderRadius: 2,
+    padding: 1,
+    backgroundColor: '#113264',
+  },
+  cityTitle: {
     textAlign: 'center',
-    fontWeight: 'bold',
     fontSize: 16,
+    color: '#EFF1EF',
+  },
+  count: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#202020',
   },
 })
 
