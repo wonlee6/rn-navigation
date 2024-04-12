@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react'
-import { Marker, MarkerSelectEvent } from 'react-native-maps'
+import { LatLng, Marker, MarkerPressEvent, MarkerSelectEvent } from 'react-native-maps'
 import { StyleSheet } from 'react-native'
 import { InitRegionLocationModel } from '.'
 import { APTLttotPblancDetailData } from '@/model/home'
 import { Text, View } from '../Themed'
+import useRegion from '@/store/useRegion'
 
 type OptionalRegionLocation = {
   count?: number
@@ -16,25 +17,20 @@ type Props = {
 }
 
 function MarkerComponent({ locationData }: Props) {
-  const handleMarkerSelect = useCallback((event: MarkerSelectEvent) => {
-    console.log(event)
-  }, [])
-
   return (
     <>
       {locationData.map((item) => (
-        <MarkerListItem {...item} onMarkerSelect={handleMarkerSelect} />
+        <MarkerListItem {...item} key={item.city} />
       ))}
     </>
   )
 }
 
-type MarkerListItemModel = RegionModel & {
-  onMarkerSelect: (event: MarkerSelectEvent) => void
-}
+type MarkerListItemModel = RegionModel & {}
 
 const MarkerListItem = React.memo((props: MarkerListItemModel) => {
-  const { city, lat, lng, count, onMarkerSelect } = props
+  const { city, lat, lng, count } = props
+  const handleRegion = useRegion((state) => state.handleRegion)
 
   return (
     <Marker
@@ -43,8 +39,7 @@ const MarkerListItem = React.memo((props: MarkerListItemModel) => {
         latitude: lat,
         longitude: lng,
       }}
-      title={city}
-      onSelect={onMarkerSelect}
+      onPress={(event) => handleRegion(event.nativeEvent.coordinate, city)}
     >
       <View style={styles.container}>
         <Text style={styles.title}>{city}</Text>

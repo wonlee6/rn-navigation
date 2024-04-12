@@ -1,19 +1,19 @@
 import { StyleSheet, ActivityIndicator } from 'react-native'
 
-import EditScreenInfo from '@/components/EditScreenInfo'
+// import EditScreenInfo from '@/components/EditScreenInfo'
 import { Text, View } from '@/components/Themed'
 import MapComponent from '@/components/map'
 import { useQuery } from '@tanstack/react-query'
 import { fetchHomeInfoDetailSvc } from '@/service/api'
-import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
-import { UrbtyOfctlLttotPblancDetail } from '@/model/home'
+// import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
+import { APTLttotPblancDetail } from '@/model/home'
 
 export default function TabOneScreen() {
   const { isPending, error, data, refetch, isLoading } = useQuery<
-    UrbtyOfctlLttotPblancDetail,
+    APTLttotPblancDetail,
     Error
   >({
-    queryKey: ['UrbtyOfctlLttotPblancDetail'],
+    queryKey: ['APTLttotPblancDetail'],
     queryFn: fetchHomeInfoDetailSvc,
   })
   //   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)

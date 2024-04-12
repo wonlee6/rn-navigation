@@ -17,26 +17,6 @@ export const getLocation = async (
 
 type ReturnRegionData = Record<string, APTLttotPblancDetailData[]>
 
-// {
-//   서울: APTLttotPblancDetailData[]
-//   강원: APTLttotPblancDetailData[]
-//   대전: APTLttotPblancDetailData[]
-//   충남: APTLttotPblancDetailData[]
-//   세종: APTLttotPblancDetailData[]
-//   충북: APTLttotPblancDetailData[]
-//   인천: APTLttotPblancDetailData[]
-//   경기: APTLttotPblancDetailData[]
-//   광주: APTLttotPblancDetailData[]
-//   전남: APTLttotPblancDetailData[]
-//   전북: APTLttotPblancDetailData[]
-//   부산: APTLttotPblancDetailData[]
-//   경남: APTLttotPblancDetailData[]
-//   울산: APTLttotPblancDetailData[]
-//   제주: APTLttotPblancDetailData[]
-//   대구: APTLttotPblancDetailData[]
-//   경북: APTLttotPblancDetailData[]
-// }
-
 export function convertRegionData(data: APTLttotPblancDetailData[]): ReturnRegionData {
   return data.reduce(
     (acc: ReturnRegionData, cur) => {

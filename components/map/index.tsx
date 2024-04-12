@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Dimensions, StyleSheet } from 'react-native'
 
-import MapView from 'react-native-maps'
+import MapView, { LatLng, MarkerPressEvent } from 'react-native-maps'
 import {
   APTLttotPblancDetail,
   APTLttotPblancDetailData,
@@ -11,6 +11,7 @@ import useLocationPermission from '@/hooks/useLocationPermission'
 import MapContainer from './MapContainer'
 import MarkerComponent from './MarkerComponent'
 import { convertRegionData } from '@/lib/utils'
+import useRegion from '@/store/useRegion'
 
 type OptionalRegionLocation = {
   count?: number
@@ -26,8 +27,12 @@ type RegionModel = {
   latitude: number
   longitude: number
   latitudeDelta: number
-  longitudeDelta:number
+  longitudeDelta: number
 }
+
+const { width, height } = Dimensions.get('window')
+const ASPECT_RATIO = width / height
+
 export default function MapComponent({
   isLoading,
   mapData,
@@ -35,17 +40,31 @@ export default function MapComponent({
   isLoading: boolean
   mapData: APTLttotPblancDetail
 }) {
-  const location = useLocationPermission()
+  // const location = useLocationPermission()
   // useEffect(() => console.log(location), [location])
-  const { width, height } = Dimensions.get('window')
-  const ASPECT_RATIO = width / height
 
-  const [region, setRegion] = useState<RegionModel>({
-    latitude: 36,
-    longitude: 127.8,
-    latitudeDelta: 5.9,
-    longitudeDelta: 5.9 * ASPECT_RATIO,
-  })
+  const region = useRegion((state) => state.region)
+
+  // const [region, setRegion] = useState<RegionModel>({
+  //   latitude: 36,
+  //   longitude: 127.8,
+  //   latitudeDelta: 5.9, // 위도 범위
+  //   longitudeDelta: 5.9 * ASPECT_RATIO, // 경도 범위
+  // })
+
+  // const handlePressMarker = useCallback(
+  //   (event: MarkerPressEvent) => {
+  //     const coodinate = event.nativeEvent.coordinate
+  //     setRegion({
+  //       // ...region,
+  //       latitude: coodinate.latitude,
+  //       latitudeDelta: region.latitudeDelta * 0.13,
+  //       longitude: coodinate.longitude,
+  //       longitudeDelta: region.longitudeDelta * 0.13,
+  //     })
+  //   },
+  //   [region]
+  // )
 
   const filteredRegionData = useMemo(() => {
     const regionData = convertRegionData(mapData.data)
@@ -75,11 +94,18 @@ export default function MapComponent({
   return (
     <MapContainer>
       <MapView
-        //   provider={this.props.provider}
+        provider={'google'}
         style={styles.map}
-        initialRegion={region}
-        onRegionChange={(region) => setRegion(region)}
-        // customMapStyle={customStyle}
+        // initialRegion={region}
+        region={region}
+        // onRegionChange={(region) => setRegion(region)}
+        // onRegionChangeComplete={(region, details) => {
+        //   console.log('latitudeDelta', region.latitudeDelta)
+        //   console.log('longitudeDelta', region.longitudeDelta)
+        //   console.log('ASPECT_RATIO', ASPECT_RATIO)
+        // }}
+        // onMarkerPress={handlePressMarker}
+        customMapStyle={customStyle}
         loadingEnabled={isLoading}
         loadingIndicatorColor='#666666'
         loadingBackgroundColor='#eeeeee'
@@ -116,13 +142,13 @@ const styles = StyleSheet.create({
 
 const initRegionLocation: InitRegionLocationModel[] = [
   {
-    lat: 37.540705,
-    lng: 126.956764,
+    lat: 37.46615771219145,
+    lng: 127.09904736234534,
     city: '서울',
   },
   {
-    lat: 37.469221,
-    lng: 126.573234,
+    lat: 37.2593484544146,
+    lng: 126.39466259672034,
     city: '인천',
   },
   {
@@ -141,18 +167,18 @@ const initRegionLocation: InitRegionLocationModel[] = [
     city: '울산',
   },
   {
-    lat: 36.321655,
+    lat: 36.221655,
     lng: 127.378953,
     city: '대전',
   },
   {
-    lat: 35.198362,
+    lat: 35.028362,
     lng: 129.053922,
     city: '부산',
   },
   {
-    lat: 37.567167,
-    lng: 127.190292,
+    lat: 37.12842233974353,
+    lng: 127.38850048734534,
     city: '경기',
   },
   {
@@ -177,7 +203,7 @@ const initRegionLocation: InitRegionLocationModel[] = [
   },
   {
     lat: 35.259787,
-    lng: 128.664734,
+    lng: 128.364734,
     city: '경남',
   },
   {
@@ -186,7 +212,7 @@ const initRegionLocation: InitRegionLocationModel[] = [
     city: '전북',
   },
   {
-    lat: 34.8194,
+    lat: 34.7194,
     lng: 126.893113,
     city: '전남',
   },
