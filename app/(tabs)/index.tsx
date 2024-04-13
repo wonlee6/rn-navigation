@@ -1,23 +1,30 @@
+import { useEffect } from 'react'
 import { StyleSheet, ActivityIndicator } from 'react-native'
 
-// import EditScreenInfo from '@/components/EditScreenInfo'
 import { Text, View } from '@/components/Themed'
 import MapComponent from '@/components/map'
 import { useQuery } from '@tanstack/react-query'
 import { fetchHomeInfoDetailSvc } from '@/service/api'
-// import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus'
-import { APTLttotPblancDetail } from '@/model/home'
+import { UrbtyOfctlLttotPblancDetail } from '@/model/home'
+import useHome from '@/store/useHome'
 
 export default function TabOneScreen() {
   const { isPending, error, data, refetch, isLoading } = useQuery<
-    APTLttotPblancDetail,
+    UrbtyOfctlLttotPblancDetail,
     Error
   >({
-    queryKey: ['APTLttotPblancDetail'],
+    queryKey: ['getUrbtyOfctlLttotPblancDetail'],
     queryFn: fetchHomeInfoDetailSvc,
   })
-  //   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)
+
+  const handleRegion = useHome((state) => state.handleRegion)
+  // const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)
   //   useRefreshOnFocus(refetch)
+
+  useEffect(() => {
+    if (!data) return
+    handleRegion(data.data)
+  }, [data])
 
   if (isPending) {
     return <ActivityIndicator size='large' />
@@ -31,7 +38,7 @@ export default function TabOneScreen() {
     )
   }
 
-  return <MapComponent mapData={data} isLoading={isLoading} />
+  return <MapComponent isLoading={isLoading} />
 }
 
 const styles = StyleSheet.create({

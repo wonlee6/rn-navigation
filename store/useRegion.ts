@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { Dimensions } from 'react-native'
-import { LatLng } from 'react-native-maps'
+import { LatLng, Region } from 'react-native-maps'
 import { getCoordinateByProvince, getRatioByProvince } from '@/lib/utils'
 
 type RegionModel = {
@@ -13,7 +13,8 @@ type RegionModel = {
 }
 
 type Action = {
-  handleRegion: (coordinate: LatLng, city: string) => void
+  handleRegion: (city: string) => void
+  handleRegionChangeComplete: (region: Region) => void
 }
 
 const { width, height } = Dimensions.get('window')
@@ -26,7 +27,7 @@ const useRegion = create<RegionModel & Action>((set) => ({
     latitudeDelta: 5.9, // 위도 범위
     longitudeDelta: 5.9 * ASPECT_RATIO, // 경도 범위,
   },
-  handleRegion: (currentRegion, city) =>
+  handleRegion: (city) =>
     set((state) => {
       const ratio = getRatioByProvince(city)
       // console.log(city, ratio)
@@ -40,6 +41,15 @@ const useRegion = create<RegionModel & Action>((set) => ({
         },
       }
     }),
+  handleRegionChangeComplete: (region) =>
+    set((state) => ({
+      ...state,
+      region: {
+        ...state.region,
+        latitudeDelta: region.latitudeDelta,
+        longitudeDelta: region.longitudeDelta,
+      },
+    })),
 }))
 
 export default useRegion

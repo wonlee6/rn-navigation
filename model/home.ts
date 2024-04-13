@@ -72,11 +72,11 @@ export type UrbtyOfctlLttotPblancDetailData = {
   CNTRCT_CNCLS_BGNDE: string // 계약 시작일
   CNTRCT_CNCLS_ENDDE: string // 계약 종료일
   HMPG_ADRES: string // 홈페이지 주소
-  HOUSE_DTL_SECD: string // 주택상세코드
+  HOUSE_DTL_SECD: string // 주택상세구분코드(01:도시형생활주택, 02:오피스텔, 03:민간임대, 03:공공지원민간임대)
   HOUSE_DTL_SECD_NM: string // 주택상세구분코드명
   HOUSE_MANAGE_NO: string // 주택관리번호
   HOUSE_NM: string // 주택명
-  HOUSE_SECD: string // 주택구분코드
+  HOUSE_SECD: string // 주택구분코드(02:도시형/오피스텔/민간임대, 03:공공지원민간임대)
   HOUSE_SECD_NM: string // 주택 구분 코드 (도시형, 오피스텔, 민간임대)
   HSSPLY_ADRES: string // 공급 위치
   HSSPLY_ZIP: string // 공급 위치 우편번호
@@ -86,22 +86,11 @@ export type UrbtyOfctlLttotPblancDetailData = {
   PBLANC_URL: string // 분양정보 url
   PRZWNER_PRESNATN_DE: string // 당첨자 발표일
   RCRIT_PBLANC_DE: string // 모집 공고일
-  SEARCH_HOUSE_SECD: string // 주택구분
+  SEARCH_HOUSE_SECD: string // 주택구분 (0201:도시형생활주택, 0202:오피스텔, 0203:민간임대, 0303:공공지원민간임대)
   SUBSCRPT_RCEPT_BGNDE: string // 청약 접수 시작일
   SUBSCRPT_RCEPT_ENDDE: string // 청약 접수 마감일
   TOT_SUPLY_HSHLDCO: number // 공급 규모
 }
-
-/**
- *  주택 구분 코드 SEARCH_HOUSE_SECD
- *  도시형생활주택 - 0201, 오피스텔 - 0202, 민간임대 - 0203, 공공지원민간임대 - 0303
- *
- *  주택구분코드 HOUSE_SECD
- *  무순위/잔여세대 - 04, 계약취소주택 - 06
- *
- *  주택상세구분코드 HOUSE_DTL_SECD
- *  도시형 - 01, 오피스텔 - 02, 민간 - 03, 공공지원민간임대 - 04
- */
 
 // 주택관리번호, 공고번호 값을 이용하여 오피스텔/도시형/민간임대/생활숙박시설 분양정보 주택형별 상세정보를 제공
 export type UrbtyOfctlLttotPblancMdl = {
@@ -186,13 +175,9 @@ export type PblPvtRentLttotPblancMdlData = {
   TP: string // 타입
 }
 
-type OptionalRegionLocation = {
-  count?: number
-  children?: APTLttotPblancDetailData[]
-}
-
-export type InitRegionLocationModel = {
+export type RegionCountModel = {
   lat: number
   lng: number
   city: string
-} & OptionalRegionLocation
+  count?: number
+}

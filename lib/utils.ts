@@ -1,17 +1,81 @@
-import { APTLttotPblancDetailData } from '@/model/home'
+import { APTLttotPblancDetailData, UrbtyOfctlLttotPblancDetailData } from '@/model/home'
+import { LatLng } from 'react-native-maps'
 
-export const getLocation = async (
-  address: string
-): Promise<{ lat: number; lng: number }> => {
+export const getCoordinateByAddress = async (address: string): Promise<LatLng> => {
   const response = await fetch(
     `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&region=kr&key=${process.env.EXPO_PUBLIC_GOOGLE_MAP_API_KEY}`
   )
   const data = await response.json()
-  const { lat, lng } = data.results[0].geometry.location as { lat: number; lng: number }
-
+  const { lat, lng } = data.results[0].geometry.location
   return {
-    lat,
-    lng,
+    latitude: lat,
+    longitude: lng,
+  }
+}
+
+type ReturnRegionCount = {
+  city: string
+  count: number
+}
+
+export function getRegionCount(
+  data: UrbtyOfctlLttotPblancDetailData[]
+): ReturnRegionCount[] {
+  return data.reduce((acc: ReturnRegionCount[], cur) => {
+    const cityName = convertCityName(cur.HSSPLY_ADRES.split(' ')[0])
+    if (!acc.find((v) => v.city === cityName)) {
+      return [...acc, { city: cityName, count: 1 }]
+    }
+    return acc.map((i) => {
+      if (i.city === cityName) {
+        return {
+          ...i,
+          count: i.count + 1,
+        }
+      }
+      return i
+    })
+  }, [])
+}
+
+function convertCityName(SUBSCRPT_AREA_CODE: string): string {
+  switch (SUBSCRPT_AREA_CODE) {
+    case '서울특별시':
+      return '서울'
+    case '강원도':
+      return '강원'
+    case '대전광역시':
+      return '대전'
+    case '충청남도':
+      return '충남'
+    case '세종특별자치시':
+      return '세종'
+    case '충청북도':
+      return '충북'
+    case '인천광역시':
+      return '인천'
+    case '경기도':
+      return '경기'
+    case '광주광역시':
+      return '광주'
+    case '전라남도':
+      return '전남'
+    case '전라북도':
+      return '전북'
+    case '부산광역시':
+      return '부산'
+    case '경상남도':
+      return '경남'
+    case '울산광역시':
+      return '울산'
+    case '제주특별자치도':
+      return '제주'
+    case '대구광역시':
+      return '대구'
+    case '경상북도':
+      return '경북'
+    default:
+      return ''
   }
 }
 
@@ -251,3 +315,42 @@ export function getRatioByProvince(province: string) {
       return 1
   }
 }
+
+// switch (SUBSCRPT_AREA_CODE) {
+//   case '100':
+//     return '서울'
+//   case '200':
+//     return '강원'
+//   case '300':
+//     return '대전'
+//   case '312':
+//     return '충남'
+//   case '338':
+//     return '세종'
+//   case '360':
+//     return '충북'
+//   case '400':
+//     return '인천'
+//   case '410':
+//     return '경기'
+//   case '500':
+//     return '광주'
+//   case '513':
+//     return '전남'
+//   case '560':
+//     return '전북'
+//   case '600':
+//     return '부산'
+//   case '621':
+//     return '경남'
+//   case '680':
+//     return '울산'
+//   case '690':
+//     return '제주'
+//   case '700':
+//     return '대구'
+//   case '712':
+//     return '경북'
+//   default:
+//     return ''
+// }

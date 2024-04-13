@@ -1,40 +1,20 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { Dimensions, StyleSheet } from 'react-native'
 
 import MapView from 'react-native-maps'
-import { APTLttotPblancDetail } from '@/model/home'
 // import useLocationPermission from '@/hooks/useLocationPermission'
 import MapContainer from './MapContainer'
 import MarkerComponent from './MarkerComponent'
-import { convertRegionData } from '@/lib/utils'
 import useRegion from '@/store/useRegion'
-import { initRegionLocation } from '@/data/init-region-location'
 
-// const { width, height } = Dimensions.get('window')
-// const ASPECT_RATIO = width / height
-
-export default function MapComponent({
-  isLoading,
-  mapData,
-}: {
-  isLoading: boolean
-  mapData: APTLttotPblancDetail
-}) {
+export default function MapComponent({ isLoading }: { isLoading: boolean }) {
   // const location = useLocationPermission()
   // useEffect(() => console.log(location), [location])
 
   const region = useRegion((state) => state.region)
-
-  const filteredRegionData = useMemo(() => {
-    const regionData = convertRegionData(mapData.data)
-    return initRegionLocation.map((item) => {
-      return {
-        ...item,
-        count: regionData[item.city].length,
-        // children: regionData[item.city],
-      }
-    })
-  }, [mapData])
+  const handleRegionChangeComplete = useRegion(
+    (state) => state.handleRegionChangeComplete
+  )
 
   // const getLocationData = async () => {
   // let arr: UrbtyOfctlLttotPblancDetailLocation[] = []
@@ -57,12 +37,7 @@ export default function MapComponent({
         style={styles.map}
         // initialRegion={region}
         region={region}
-        // onRegionChange={(region) => setRegion(region)}
-        // onRegionChangeComplete={(region, details) => {
-        //   console.log('latitudeDelta', region.latitudeDelta)
-        //   console.log('longitudeDelta', region.longitudeDelta)
-        //   console.log('ASPECT_RATIO', ASPECT_RATIO)
-        // }}
+        onRegionChangeComplete={(region, details) => handleRegionChangeComplete(region)}
         // onMarkerPress={handlePressMarker}
         customMapStyle={customStyle}
         loadingEnabled={isLoading}
@@ -71,7 +46,7 @@ export default function MapComponent({
         // showsUserLocation
         // showsMyLocationButton
       >
-        <MarkerComponent locationData={filteredRegionData} />
+        <MarkerComponent />
       </MapView>
     </MapContainer>
   )
