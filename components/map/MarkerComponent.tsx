@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react'
-import { StyleSheet } from 'react-native'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { ActivityIndicator, StyleSheet } from 'react-native'
 import { LatLng, Marker } from 'react-native-maps'
 
 import { RegionCountModel, UrbtyOfctlLttotPblancDetailData } from '@/model/home'
@@ -10,9 +10,9 @@ import useHome from '@/store/useHome'
 import { Text, View } from '../Themed'
 
 function MarkerComponent() {
-  const region = useRegion((state) => state.region)
   const homeData = useHome((state) => state.homeData)
   const convertHomeData = useHome((state) => state.convertHomeData)
+  const region = useRegion((state) => state.region)
 
   // const handleComine = useCallback(
   //   (
@@ -45,28 +45,6 @@ function MarkerComponent() {
   //   combine: handleComine,
   // })
 
-  // useEffect(() => {
-  //   if (!coordinateByHomeData.pending) {
-  //     const test = homeData.map((item) => {
-  //       for (const i of coordinateByHomeData.data) {
-  //         if (item.HOUSE_MANAGE_NO === i?.houseNo) {
-  //           return {
-  //             ...item,
-  //             ...i,
-  //           }
-  //         }
-  //         return item
-  //       }
-  //     })
-  //     setState(test as any)
-  //   }
-  // }, [coordinateByHomeData])
-  // const filteredHomeData: Array<UrbtyOfctlLttotPblancDetailData & { lat: number; lng: number; houseNo: string }> = useMemo(() => {
-  //   if (!homeData) return []
-
-  // }, [homeData, coordinateByHomeData])
-
-  // useEffect(() => console.log(homeData), [homeData])
   const filteredRegionData = useMemo(() => {
     const convertMapData = getRegionCount(homeData)
     return initRegionLocation.map((item) => {
@@ -78,12 +56,24 @@ function MarkerComponent() {
     })
   }, [homeData])
 
-  if (region.latitudeDelta < 3) {
+  const [isSelectRegion, setIsSelectRegion] = useState(false)
+
+  const handleSelectRegion = useCallback(() => {
+    setIsSelectRegion(true)
+  }, [])
+
+  useEffect(() => {
+    if (region.latitudeDelta < 1) {
+      setIsSelectRegion(false)
+    }
+  }, [region])
+
+  if (isSelectRegion) {
     return (
       <>
         {convertHomeData.map((item, index) => {
           if (item) {
-            return <MarkerListItem2 key={index} {...item} />
+            return <MarkerListItem2 key={item.HOUSE_MANAGE_NO} {...item} index={index} />
           }
         })}
       </>
@@ -93,34 +83,18 @@ function MarkerComponent() {
   return (
     <>
       {filteredRegionData.map((item) => (
-        <MarkerListItem key={item.city} {...item} />
+        <MarkerListItem key={item.city} onSelectRegion={handleSelectRegion} {...item} />
       ))}
     </>
   )
 }
 
-const MarkerListItem2 = React.memo((props: UrbtyOfctlLttotPblancDetailData & LatLng) => {
-  return (
-    <Marker
-      key={props.HOUSE_MANAGE_NO}
-      coordinate={{
-        latitude: props.latitude,
-        longitude: props.longitude,
-      }}
-      // onPress={() => handleRegion(city)}
-    >
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.cityTitle}>{props.HOUSE_SECD_NM}</Text>
-        </View>
-        <Text style={styles.count}>{props.HOUSE_NM}</Text>
-      </View>
-    </Marker>
-  )
-})
+type TestProps = RegionCountModel & {
+  onSelectRegion: () => void
+}
 
-const MarkerListItem = React.memo((props: RegionCountModel) => {
-  const { city, lat, lng, count } = props
+const MarkerListItem = React.memo((props: TestProps) => {
+  const { city, lat, lng, count, onSelectRegion } = props
   const handleRegion = useRegion((state) => state.handleRegion)
 
   return (
@@ -130,13 +104,56 @@ const MarkerListItem = React.memo((props: RegionCountModel) => {
         latitude: lat,
         longitude: lng,
       }}
-      onPress={() => handleRegion(city)}
+      onPress={() => {
+        handleRegion(city)
+        onSelectRegion()
+      }}
     >
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <Text style={styles.cityTitle}>{city}</Text>
         </View>
         <Text style={styles.count}>{count}</Text>
+      </View>
+    </Marker>
+  )
+})
+
+type MarkerListProps = UrbtyOfctlLttotPblancDetailData &
+  LatLng & {
+    index: number
+  }
+
+const MarkerListItem2 = React.memo((props: MarkerListProps) => {
+  return (
+    <Marker
+      key={props.HOUSE_MANAGE_NO + String(props.index)}
+      coordinate={{
+        latitude: props.latitude,
+        longitude: props.longitude,
+      }}
+      // onPress={() => props.onSelectRegion()}
+    >
+      <View
+        style={{
+          width: 160,
+          flex: 1,
+          shadowColor: 'black',
+          shadowOpacity: 0.25,
+          shadowOffset: { width: 0, height: 2 },
+          shadowRadius: 8,
+          opacity: 0.9,
+          borderRadius: 6,
+        }}
+      >
+        <View style={styles.titleContainer}>
+          <Text style={styles.cityTitle}>{props.HOUSE_DTL_SECD_NM}</Text>
+        </View>
+        <View>
+          <Text style={styles.count} ellipsizeMode='tail' numberOfLines={2}>
+            {props.HOUSE_NM}
+          </Text>
+        </View>
       </View>
     </Marker>
   )
@@ -154,18 +171,19 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   titleContainer: {
+    flex: 1,
     borderRadius: 2,
     padding: 1,
     backgroundColor: '#113264',
   },
   cityTitle: {
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 14,
     color: '#EFF1EF',
   },
   count: {
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 14,
     // color: '#202020',
   },
 })

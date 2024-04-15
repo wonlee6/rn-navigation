@@ -9,19 +9,40 @@ type RegionModel = {
 }
 
 type Action = {
-  handleRegion: (homeData: UrbtyOfctlLttotPblancDetailData[]) => void
+  handleHome: (homeData: UrbtyOfctlLttotPblancDetailData[]) => void
 }
 
-const useHome = create<RegionModel & Action>((set) => ({
+const useHome = create<RegionModel & Action>()((set) => ({
   homeData: [],
   convertHomeData: [],
-  handleRegion: async (homeData) => {
+  handleHome: async (homeData) => {
     let arr: Array<UrbtyOfctlLttotPblancDetailData & LatLng> = []
     for (const item of homeData) {
       const aa = await getCoordinateByAddress(item.HSSPLY_ADRES)
       arr.push({ ...item, ...aa })
     }
-    set((state) => ({ homeData, convertHomeData: arr }))
+    console.log(1)
+    const test = arr.reduce(
+      (
+        acc: Array<UrbtyOfctlLttotPblancDetailData & LatLng>,
+        cur: UrbtyOfctlLttotPblancDetailData & LatLng
+      ) => {
+        if (
+          acc.find((v) => v.latitude === cur.latitude && v.longitude === cur.longitude)
+        ) {
+          acc.push({
+            ...cur,
+            latitude: cur.latitude + 0.003,
+            longitude: cur.longitude + 0.003,
+          })
+        } else {
+          acc.push(cur)
+        }
+        return acc
+      },
+      []
+    )
+    set(() => ({ homeData, convertHomeData: test }))
   },
 }))
 

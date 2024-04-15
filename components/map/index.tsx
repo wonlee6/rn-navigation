@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Dimensions, StyleSheet } from 'react-native'
 
 import MapView from 'react-native-maps'
@@ -12,6 +12,7 @@ export default function MapComponent({ isLoading }: { isLoading: boolean }) {
   // useEffect(() => console.log(location), [location])
 
   const region = useRegion((state) => state.region)
+
   const handleRegionChangeComplete = useRegion(
     (state) => state.handleRegionChangeComplete
   )
@@ -35,14 +36,15 @@ export default function MapComponent({ isLoading }: { isLoading: boolean }) {
       <MapView
         provider={'google'}
         style={styles.map}
-        // initialRegion={region}
-        region={region}
+        initialRegion={region}
+        // region={region}
+        // onRegionChange={(region) => handleRegionChangeComplete(region)}
         onRegionChangeComplete={(region, details) => handleRegionChangeComplete(region)}
         // onMarkerPress={handlePressMarker}
         customMapStyle={customStyle}
-        loadingEnabled={isLoading}
-        loadingIndicatorColor='#666666'
-        loadingBackgroundColor='#eeeeee'
+        // loadingEnabled={isLoading}
+        // loadingIndicatorColor='#666666'
+        // loadingBackgroundColor='#eeeeee'
         // showsUserLocation
         // showsMyLocationButton
       >

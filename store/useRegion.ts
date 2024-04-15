@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { Dimensions } from 'react-native'
-import { LatLng, Region } from 'react-native-maps'
+import { Region } from 'react-native-maps'
 import { getCoordinateByProvince, getRatioByProvince } from '@/lib/utils'
 
 type RegionModel = {
@@ -30,7 +30,6 @@ const useRegion = create<RegionModel & Action>((set) => ({
   handleRegion: (city) =>
     set((state) => {
       const ratio = getRatioByProvince(city)
-      // console.log(city, ratio)
       const { latitude, longitude } = getCoordinateByProvince(city)
       return {
         region: {
@@ -42,10 +41,10 @@ const useRegion = create<RegionModel & Action>((set) => ({
       }
     }),
   handleRegionChangeComplete: (region) =>
-    set((state) => ({
-      ...state,
+    set(() => ({
       region: {
-        ...state.region,
+        latitude: region.latitude,
+        longitude: region.longitude,
         latitudeDelta: region.latitudeDelta,
         longitudeDelta: region.longitudeDelta,
       },
